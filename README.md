@@ -9,7 +9,7 @@ We introduce *Semantic Dynamics*, a framework that interprets the evolution of t
 
 Consider a corpus of text represented as a sequence of tokens $\mathbf{v} = (v_t)$, where each $v_t \in \mathcal{T}$ is drawn from a discrete vocabulary. Let $f: \mathcal{T}^N \rightarrow \mathcal{E}$ be a semantic embedding function that maps a window of $N$ consecutive tokens $\mathbf{v}[t:t+N]$ to a point $q_t \in \mathcal{E}$ in a continuous semantic embedding space $\mathcal{E} \cong \mathbb{R}^d$. This point $q_t$ captures the meaning of the local context centered around position $t$. From this point on, the dependency on the vector of tokens $\mathbf{v}$ will be omitted from the notation, but always implied.
 
-> **Key idea #1 - lifting the discrete embeddings $\mathbf q = (q_t)$ into a continuous trajectory $q(t)$:** We treat the discrete trajectory of the semantic vector as partial observations of the true position of an underlying continuous particle trajectory in embedding space $\mathcal E$ (see [[Semantic Dynamics - Studying the Thermodynamics of Semantic Particles#Continuum Semantic Trajectory Hypothesis|the Continuum Semantic Trajectory Hypothesis]] and the [[Semantic Dynamics - Studying the Thermodynamics of Semantic Particles#Ergodic Hypothesis|Ergodic Hypothesis]]). This idea will allow us to study the distribution of embedding vectors as if they were a gas, through the lens of Statistical Mechanics.
+> **Key idea #1 — lifting the discrete embeddings $\mathbf q = (q_t)$ into a continuous trajectory $q(t)$:** We treat the discrete trajectory of the semantic vector as partial observations of the true position of an underlying continuous particle trajectory in embedding space $\mathcal E$ (see [[Semantic Dynamics - Studying the Thermodynamics of Semantic Particles#Continuum Semantic Trajectory Hypothesis|the Continuum Semantic Trajectory Hypothesis]] and the [[Semantic Dynamics - Studying the Thermodynamics of Semantic Particles#Ergodic Hypothesis|Ergodic Hypothesis]]). This idea will allow us to study the distribution of embedding vectors as if they were a gas, through the lens of Statistical Mechanics.
 
 We will see that a practical implementation of this step is not necessary.
 
@@ -37,7 +37,7 @@ $$
 $$
 where $T\mathcal{E} = \bigsqcup_{q \in \mathcal{E}} T_q\mathcal{E}$ is the *tangent bundle of the embedding space. This space is the natural home for *velocity-based dynamics*, and we refer to it as the *semantic state space*. 
 
-> **Key idea #2 - the semantic particle**: The trajectory $t \mapsto (q(t), \dot{q}(t))$ describes a "*semantic particle*" moving through the tangent bundle $T\mathcal{E}$. This picture closely resembles the idea of a particle moving through a potential landscape shaped by the semantics of the text. This analogy opens the door to analyzing linguistic dynamics using tools from **statistical mechanics** and **thermodynamics**—such as energy, entropy, temperature, and diffusion—by interpreting fluctuations in meaning and flow as physical-like processes.
+> **Key idea #2 — the semantic particle**: The trajectory $t \mapsto (q(t), \dot{q}(t))$ describes a "*semantic particle*" moving through the tangent bundle $T\mathcal{E}$. This picture closely resembles the idea of a particle moving through a potential landscape shaped by the semantics of the text. This analogy opens the door to analyzing linguistic dynamics using tools from **statistical mechanics** and **thermodynamics**—such as energy, entropy, temperature, and diffusion—by interpreting fluctuations in meaning and flow as physical-like processes.
 
 ---
 
@@ -59,14 +59,14 @@ If we, in fact, replace the Euclidean metric with the *Fisher information metric
 
 ## Recovering the Thermodynamic Quantities
 
-> **Key idea #3 - using the canonical ensemble**: With the geometric structure in place, we can define physical analogs to study text as a dynamical system. Starting from the density $\rho(q)$, we can write a recipe in the *canonical ensemble* to define all the relevant physical quantities from the text and from one another.
+> **Key idea #3 — using the canonical ensemble**: With the geometric structure in place, we can define physical analogs to study text as a dynamical system. Starting from the density $\rho(q)$, we can write a recipe in the *canonical ensemble* to define all the relevant physical quantities from the text and from one another.
 
 
 ### Semantic Density $\rho(q)$
 
 The probability density $\rho(q)$ plays a foundational role in the thermodynamic framework of semantic dynamics. It quantifies how frequently different regions of the embedding space $\mathcal{E}$ are occupied by the *semantic point*. In this context, $\rho(q)$ is not merely a statistical artifact—it represents the *empirical likelihood of encountering a particular semantic state* $q$ throughout the text. High-density regions correspond to common, coherent, or stylistically typical meanings (e.g., standard syntactic patterns, frequent topics), while low-density areas represent rare, idiosyncratic, or disfluent constructions. This makes $\rho(q)$ a direct proxy for *semantic plausibility*, and through the relation $V(q) = -\log \rho(q)$, it defines the underlying potential landscape that governs the motion of the semantic particle.
 
-> **Key idea #4 - how to estimate the distribution of embeddings $\rho$**: To estimate $\rho(q)$ *empirically* from real text, we treat the sequence of sliding-window embeddings $q_t = f(\mathbf{v}[t:t+N])$ as samples from an unknown distribution. Several non-parametric methods can be used, for example *Kernel Density Estimation* (KDE), *Gaussian Mixture Model* (GMM), or *$k$-Nearest Neighbors Density Estimation (k-NN DE)*. Since we assume equilibrium (see the [[Semantic Dynamics - Studying the Thermodynamics of Semantic Particles#Equilibrium Hypothesis|Equilibrium Hypothesis]]), likelihood-based analysis can help validate the estimated distribution.
+> **Key idea #4 — how to estimate the distribution of embeddings $\rho$**: To estimate $\rho(q)$ *empirically* from real text, we treat the sequence of sliding-window embeddings $q_t = f(\mathbf{v}[t:t+N])$ as samples from an unknown distribution. Several methods can be used, for example *Kernel Density Estimation* (KDE), *Gaussian Mixture Model* (GMM), or *$k$-Nearest Neighbors Density Estimation (k-NN DE)*. Since we assume equilibrium (see the [[Semantic Dynamics - Studying the Thermodynamics of Semantic Particles#Equilibrium Hypothesis|Equilibrium Hypothesis]]), likelihood-based analysis can help validate the estimated distribution.
 
 When applying this framework to real data, it is imperative to verify that the metric and density choices don’t arbitrarily change the *physics* of the system.
 
@@ -87,9 +87,9 @@ $$
 
 The dimension $d$ of the embedding space $\mathcal{E}$ is a key parameter in the thermodynamic framework, appearing in fundamental quantities such as temperature and the partition function. While the ambient space is $\mathbb{R}^d$, the actual dynamics of language are likely confined to a lower-dimensional submanifold due to inherent constraints in grammar, topic coherence, and style.
 
-To account for this, we bring the attention to an important concept - dimensionality reduction: the empirical distribution of embedding vectors $\rho(q)$ can be well-approximated in a reduced space. We define a smooth map $\pi: \mathcal{E} \to \mathcal{M}$, where $\mathcal{M}$ is a lower-dimensional manifold (e.g., $\mathcal{M} \subset \mathbb{R}^{d_{\text{eff}}}$ with $d_{\text{eff}} \ll d$). This projection, such as one obtained via Principal Component Analysis (PCA), autoencoders, or UMAP, identifies the most significant directions of variation in the semantic trajectory $q(t)$.
+To account for this, we bring the attention to an important concept — dimensionality reduction: the empirical distribution of embedding vectors $\rho(q)$ can be well-approximated in a reduced space. We define a smooth map $\pi: \mathcal{E} \to \mathcal{M}$, where $\mathcal{M}$ is a lower-dimensional manifold (e.g., $\mathcal{M} \subset \mathbb{R}^{d_{\text{eff}}}$ with $d_{\text{eff}} \ll d$). This projection, such as one obtained via Principal Component Analysis (PCA), autoencoders, or UMAP, identifies the most significant directions of variation in the semantic trajectory $q(t)$
 
-> **Key idea #5 - dimensionality reduction**: To ease the estimation of $\rho(q)$, we may assume that it can be approximated by a lower-dimensional manifold. In this case, we should also update $d$ to be the number of principal components. PCA, or any other reasonable *dimensionality reduction* technique, can help us get rid of the less informative degrees of freedom.  
+> **Key idea #5 — dimensionality reduction**: To ease the estimation of $\rho(q)$, we may assume that it can be approximated by a lower-dimensional manifold. In this case, we should also update $d$ to be the number of principal components. PCA, or any other reasonable *dimensionality reduction* technique, can help us get rid of the less informative degrees of freedom.  
 
 The projected trajectory $q_{\mathcal{M}}(t) = \pi(q(t))$ evolves in $\mathcal{M}$, and all thermodynamic quantities are computed with respect to this reduced space. In particular, the effective dimension $d_{\text{eff}} = \dim(\mathcal{M})$ replaces $d$ in formulas involving phase space volume, ensuring that equipartition and density estimation reflect only the dynamically active degrees of freedom.
 
@@ -366,7 +366,7 @@ $$
 We managed, so far, to express several physical quantities as a function of temperature $T$. If we could measure even one of them, we would be able to lock the temperature, and thus, every other quantity.
 
 
-### Method 1 - Measuring Average Kinetic Energy
+### Method 1 — Measuring Average Kinetic Energy
 
 We can measure the average kinetic energy, $\braket K$, by first calculating the instantaneous kinetic energy at each point along the semantic trajectory and then averaging these values.
 
@@ -401,9 +401,9 @@ $$
 
 Though this method is the most obvious choice to find the temperature, and therefore all the other thermodynamical quantities, it is susceptible to the choice of the discrete time derivative algorithm, which, in the context of *Brownian motion* may be ill-defined. 
 
-### Method 2 -Measuring Entropy
+### Method 2 — Measuring Entropy
 
-> **Key idea #6 - locking everything into place**: By estimating the entropy of the system with the *Lempel-Ziv Complexity*, $S(T) \approx S_{LZ}$, and inverting the formula for entropy, we can obtain the temperature $\hat T=T(S_{LZ})$. Finally, we plug our estimate of the temperature $\hat T$ into all the other quantities to lock them into place (see the [[Semantic Dynamics - Studying the Thermodynamics of Semantic Particles#Hypothesis on Entropy|Hypothesis on Entropy]]).
+> **Key idea #6 — locking everything into place**: By estimating the entropy of the system with the *Lempel-Ziv Complexity*, $S(T) \approx S_{LZ}$, and inverting the formula for entropy, we can obtain the temperature $\hat T=T(S_{LZ})$. Finally, we plug our estimate of the temperature $\hat T$ into all the other quantities to lock them into place (see the [[Semantic Dynamics - Studying the Thermodynamics of Semantic Particles#Hypothesis on Entropy|Hypothesis on Entropy]]).
 
 #### How to Find the Temperature $T$
 
@@ -497,7 +497,7 @@ where $F$ represents deterministic forces (e.g., gradient of $-V$), and $W_t$ is
 
 We now have a framework to study the phenomenon of LLMs repeating periodically the same output token over and over again. If we add more noise to the output, it tends to do that less often, suggesting a notion of *potential well* and *kinetic energy*. 
 
-> **Key idea #7 - studying LLMs with thermodynamics**: We propose, that by analyzing the thermodynamic behavior of the text right before the *periodic token* occurs, it should be possible to suggest a safety threshold for model temperature $T_{crit}$.
+> **Key idea #7 — studying LLMs with thermodynamics**: We propose, that by analyzing the thermodynamic behavior of the text right before the *periodic token* occurs, it should be possible to suggest a safety threshold for model temperature $T_{crit}$.
 
 #### Recipe for $T_{crit}$
 
