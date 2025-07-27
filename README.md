@@ -20,7 +20,9 @@ $$
 \dot{q}(t) = \frac{d}{dt} q(t) \in T_{q}\mathcal{E},
 $$
 which captures the instantaneous rate and direction of semantic change at position $t$. The velocity, in turn, gives us the momentum:
-$$p(t) = \frac{\partial L}{\partial \dot{q}}(q(t), \dot{q}(t), t)$$
+$$
+p(t) = \frac{\partial L}{\partial \dot{q}}(q(t), \dot{q}(t), t)
+$$
 The Lagrangian relies implicitly on a notion of mass, or *"semantic inertia"*. It's not unreasonable to assume that $m$ is time-dependent. However, for the rest of the discussion, we will assume it is not (see the [[Semantic Dynamics - Studying the Thermodynamics of Semantic Particles#Constant Inertia Hypothesis|Constant Inertia Hypothesis]]). Some topics or styles resist change more than others. A "heavy" semantic particle would represent a stable, coherent discourse that doesn’t shift meaning easily (e.g., a scientific argument). A "light" one might represent stream-of-consciousness or poetic language.
 
 ---
@@ -73,7 +75,10 @@ When applying this framework to real data, it is imperative to verify that the m
 
 #### Algorithm for Estimating the Density $\rho$
 
- 1. Evaluate the list of embeddings $q=(q_t)$ with your embedding model: $$q_t = f(\mathbf{v}[t:t+N])$$
+ 1. Evaluate the list of embeddings $q=(q_t)$ with your embedding model: 
+$$
+q_t = f(\mathbf{v}[t:t+N])
+$$
     
  2. Optional: Apply a dimensionality reduction technique, like PCA.
     
@@ -357,9 +362,15 @@ We managed, so far, to express several physical quantities as a function of temp
     
  2. Invert the formula to get $T(S)$
     
- 3. Estimate $S$ with the *Lempel-Ziv Complexity* $$S(T) \approx S_{LZ}$$
+ 3. Estimate $S$ with the *Lempel-Ziv Complexity* 
+$$
+S(T) \approx S_{LZ}
+$$
     
- 4. Estimate the temperature:  $$\hat T=T(S_{LZ})$$
+ 4. Estimate the temperature:  
+$$
+\hat T=T(S_{LZ})
+$$
 Now you may go back to back, and plug this value of the temperature to get the estimate of all other thermodynamical quantities.
 
 ---
