@@ -9,7 +9,7 @@ We introduce *Semantic Dynamics*, a framework that interprets the evolution of t
 
 Consider a corpus of text represented as a sequence of tokens $\mathbf{v} = (v_t)$, where each $v_t \in \mathcal{T}$ is drawn from a discrete vocabulary. Let $f: \mathcal{T}^N \rightarrow \mathcal{E}$ be a semantic embedding function that maps a window of $N$ consecutive tokens $\mathbf{v}[t:t+N]$ to a point $q_t \in \mathcal{E}$ in a continuous semantic embedding space $\mathcal{E} \cong \mathbb{R}^d$. This point $q_t$ captures the meaning of the local context centered around position $t$. From this point on, the dependency on the vector of tokens $\mathbf{v}$ will be omitted from the notation, but always implied.
 
-> **Key idea #1 - lifting the discrete embeddings $q_t$ into a continuous trajectory $q(t)$:** We treat the discrete trajectory of the semantic vector as partial observations of the true position of an underlying continuous particle trajectory in embedding space $\mathcal E$ (see [[Semantic Dynamics - Studying the Thermodynamics of Semantic Particles#Continuum Semantic Trajectory Hypothesis|the Continuum Semantic Trajectory Hypothesis]] and the [[Semantic Dynamics - Studying the Thermodynamics of Semantic Particles#Ergodic Hypothesis|Ergodic Hypothesis]]). This idea will allow us to study the distribution of embedding vectors as if they were a gas, through the lens of Statistical Mechanics.
+> **Key idea #1 - lifting the discrete embeddings $\mathbf q = (q_t)$ into a continuous trajectory $q(t)$:** We treat the discrete trajectory of the semantic vector as partial observations of the true position of an underlying continuous particle trajectory in embedding space $\mathcal E$ (see [[Semantic Dynamics - Studying the Thermodynamics of Semantic Particles#Continuum Semantic Trajectory Hypothesis|the Continuum Semantic Trajectory Hypothesis]] and the [[Semantic Dynamics - Studying the Thermodynamics of Semantic Particles#Ergodic Hypothesis|Ergodic Hypothesis]]). This idea will allow us to study the distribution of embedding vectors as if they were a gas, through the lens of Statistical Mechanics.
 
 We will see that a practical implementation of this step is not necessary.
 
@@ -68,8 +68,6 @@ The probability density $\rho(q)$ plays a foundational role in the thermodynamic
 
 > **Key idea #4 - how to estimate the distribution of embeddings $\rho$**: To estimate $\rho(q)$ *empirically* from real text, we treat the sequence of sliding-window embeddings $q_t = f(\mathbf{v}[t:t+N])$ as samples from an unknown distribution. Several non-parametric methods can be used, for example *Kernel Density Estimation* (KDE), *Gaussian Mixture Model* (GMM), or *$k$-Nearest Neighbors Density Estimation (k-NN DE)*. Since we assume equilibrium (see the [[Semantic Dynamics - Studying the Thermodynamics of Semantic Particles#Equilibrium Hypothesis|Equilibrium Hypothesis]]), likelihood-based analysis can help validate the estimated distribution.
 
-> **Key idea #5 - dimensionality reduction**: To ease the estimation of $\rho(q)$, we may assume that it can be approximated by a lower-dimensional manifold. PCA, or any other reasonable *dimensionality reduction* technique, can help us get rid of the less informative degrees of freedom.  
-
 When applying this framework to real data, it is imperative to verify that the metric and density choices don’t arbitrarily change the *physics* of the system.
 
 
@@ -83,6 +81,41 @@ $$
  2. Optional: Apply a dimensionality reduction technique, like PCA.
     
  3. Finally, to estimate $\rho(q)$, apply a density estimation technique, like KDE, GMM, or k-NN DE.
+
+
+# Dimensionality $d$
+
+The dimension $d$ of the embedding space $\mathcal{E}$ is a key parameter in the thermodynamic framework, appearing in fundamental quantities such as temperature and the partition function. While the ambient space is $\mathbb{R}^d$, the actual dynamics of language are likely confined to a lower-dimensional submanifold due to inherent constraints in grammar, topic coherence, and style.
+
+To account for this, we bring the attention to an important concept - dimensionality reduction: the empirical distribution of embedding vectors $\rho(q)$ can be well-approximated in a reduced space. We define a smooth map $\pi: \mathcal{E} \to \mathcal{M}$, where $\mathcal{M}$ is a lower-dimensional manifold (e.g., $\mathcal{M} \subset \mathbb{R}^{d_{\text{eff}}}$ with $d_{\text{eff}} \ll d$). This projection, such as one obtained via Principal Component Analysis (PCA), autoencoders, or UMAP, identifies the most significant directions of variation in the semantic trajectory $q(t)$.
+
+> **Key idea #5 - dimensionality reduction**: To ease the estimation of $\rho(q)$, we may assume that it can be approximated by a lower-dimensional manifold. In this case, we should also update $d$ to be the number of principal components. PCA, or any other reasonable *dimensionality reduction* technique, can help us get rid of the less informative degrees of freedom.  
+
+The projected trajectory $q_{\mathcal{M}}(t) = \pi(q(t))$ evolves in $\mathcal{M}$, and all thermodynamic quantities are computed with respect to this reduced space. In particular, the effective dimension $d_{\text{eff}} = \dim(\mathcal{M})$ replaces $d$ in formulas involving phase space volume, ensuring that equipartition and density estimation reflect only the dynamically active degrees of freedom.
+
+Using $d_{\text{eff}}$ mitigates the curse of dimensionality in density estimation and ensures that thermodynamic quantities are not diluted across irrelevant or noisy dimensions. However, whether this reduction is explicitly implemented or not does not alter the theoretical structure of the framework. Throughout this document, $d$ should be understood as the *effective dimension* of the semantic manifold—the true number of independent ways in which meaning can evolve—regardless of the nominal size of the embedding space.
+
+
+### Semantic Volume $\mathcal{V}_{\text{sem}}$
+
+To extend the thermodynamic analogy beyond energy and entropy, we introduce the concept of *semantic volume*, denoted $V_{\text{sem}}$. This quantity represents the effective extent of the embedding space $\mathcal{E} \cong \mathbb{R}^d$ that is dynamically explored by the semantic particle over time. Formally, it is defined as the $d$-dimensional volume of the region in $\mathcal{E}$ where the probability density $\rho(q)$ of encountering a meaningful state is non-negligible:
+$$
+\mathcal{V}_{\text{sem}} = \int_{\mathcal{E}} dq \; \chi_{\epsilon}(q)
+$$
+where $\chi(q)$ is a characteristic function (or smoothed indicator) that selects points $q$ for which $\rho(q) > \epsilon$, for some small threshold $\epsilon > 0$. Alternatively, $\mathcal{V}_{\text{sem}}$ can be estimated via the support of the empirical distribution of embedding vectors, or as the volume of a level set $\{ q \mid V(q) \leq E \}$ for a given energy $E$.
+
+Unlike physical volume, which is confined to three spatial dimensions, $\mathcal{V}_{\text{sem}}$ generalizes the notion of "available space" to the $d$-dimensional abstract space of meaning. A large $\mathcal{V}_{\text{sem}}$ indicates a text that explores a broad range of topics or styles, while a small $\mathcal{V}_{\text{sem}}$ suggests a narrow, focused discourse.
+
+This generalization is mathematically consistent with statistical mechanics, where phase space volumes are routinely defined in high-dimensional spaces. The semantic volume plays the same thermodynamic role as physical volume: it serves as the conjugate variable to pressure, and it governs the system's capacity for expansion in meaning space, though by itself may not be very informative.
+
+#### Algorithm for Volume $\mathcal{V}_{\text{sem}}$
+
+ 1. Decide a threshold $\epsilon > 0$
+    
+ 2. Estimate $\mathcal{V}_{\text{sem}}$ by finding the region of embedding space $\mathcal E$ where $\rho$ is greater than $\epsilon$, by leveraging any parametrization possibly used for $\rho(z)$, or with a Monte Carlo method
+$$
+\boxed{\mathcal{V}_{\text{sem}} = \int_{\mathcal{E}} dq \; \chi_{\epsilon}(q)}
+$$
 
 
 ### Potential Energy $V(q)$
@@ -244,28 +277,6 @@ $$
 $$
 
 
-### Semantic Volume $\mathcal{V}_{\text{sem}}$
-
-To extend the thermodynamic analogy beyond energy and entropy, we introduce the concept of *semantic volume*, denoted $V_{\text{sem}}$. This quantity represents the effective extent of the embedding space $\mathcal{E} \cong \mathbb{R}^d$ that is dynamically explored by the semantic particle over time. Formally, it is defined as the $d$-dimensional volume of the region in $\mathcal{E}$ where the probability density $\rho(q)$ of encountering a meaningful state is non-negligible:
-$$
-\mathcal{V}_{\text{sem}} = \int_{\mathcal{E}} dq \; \chi_{\epsilon}(q)
-$$
-where $\chi(q)$ is a characteristic function (or smoothed indicator) that selects points $q$ for which $\rho(q) > \epsilon$, for some small threshold $\epsilon > 0$. Alternatively, $\mathcal{V}_{\text{sem}}$ can be estimated via the support of the empirical distribution of embedding vectors, or as the volume of a level set $\{ q \mid V(q) \leq E \}$ for a given energy $E$.
-
-Unlike physical volume, which is confined to three spatial dimensions, $\mathcal{V}_{\text{sem}}$ generalizes the notion of "available space" to the $d$-dimensional abstract space of meaning. A large $\mathcal{V}_{\text{sem}}$ indicates a text that explores a broad range of topics or styles, while a small $\mathcal{V}_{\text{sem}}$ suggests a narrow, focused discourse.
-
-This generalization is mathematically consistent with statistical mechanics, where phase space volumes are routinely defined in high-dimensional spaces. The semantic volume plays the same thermodynamic role as physical volume: it serves as the conjugate variable to pressure, and it governs the system's capacity for expansion in meaning space, though by itself may not be very informative.
-
-#### Algorithm for Volume $\mathcal{V}_{\text{sem}}$
-
- 1. Decide a threshold $\epsilon > 0$
-    
- 2. Estimate $\mathcal{V}_{\text{sem}}$ by finding the region of embedding space $\mathcal E$ where $\rho$ is greater than $\epsilon$, by leveraging any parametrization possibly used for $\rho(z)$, or with a Monte Carlo method
-$$
-\boxed{\mathcal{V}_{\text{sem}} = \int_{\mathcal{E}} dq \; \chi_{\epsilon}(q)}
-$$
-
-
 ### Semantic Pressure $P$
 
 Building on the definition of $\mathcal{V}_{\text{sem}}$, we define *semantic pressure* $P$ as the thermodynamic conjugate of volume in the canonical ensemble. It quantifies the tendency of the semantic system to expand its scope of meaning in response to confinement.
@@ -354,6 +365,44 @@ $$
 
 We managed, so far, to express several physical quantities as a function of temperature $T$. If we could measure even one of them, we would be able to lock the temperature, and thus, every other quantity.
 
+
+### Method 1 - Measuring Average Kinetic Energy
+
+We can measure the average kinetic energy, $\braket K$, by first calculating the instantaneous kinetic energy at each point along the semantic trajectory and then averaging these values.
+
+The instantaneous kinetic energy at a specific point in time t is defined as:
+$$
+K​(t)=\frac{1}{2} ​m\|\dot q(t)\|_{g}^2​
+$$
+
+#### How to Find the Temperature $T$
+
+1. **Generate the Embedding Trajectory** $\mathbf q = (q_t)$, where $q_t​=f(\mathbf v[t:t+N])$
+    
+2. **Calculate Semantic Velocity** $\dot q(t)$, which is the discrete time derivative of the position vector $\mathbf q$. Notice how this is the first time we actually have to compute any derivative. Though we should carefully consider the *Brownian* nature of the system, you can try to approximate the $\dot q(t)$ using a finite difference, such as:
+$$
+\dot q_t​ \approx q_{t+1}​−q_t​
+$$
+    
+3. **Calculate Instantaneous Kinetic Energy**: 
+$$
+K​_t=\frac{1}{2} ​m\|\dot q_t\|_{g}^2
+$$
+    
+4. **Average the Results**: 
+$$
+\braket K = \frac{1}{N} \sum_{t=1}^N K_t
+$$
+    
+ 5. Compute the temperature:
+$$
+\boxed {T=\frac {d}{2} \braket K}
+$$ 
+
+Though this method is the most obvious choice to find the temperature, and therefore all the other thermodynamical quantities, it is susceptible to the choice of the discrete time derivative algorithm, which, in the context of *Brownian motion* may be ill-defined. 
+
+### Method 2 -Measuring Entropy
+
 > **Key idea #6 - locking everything into place**: By estimating the entropy of the system with the *Lempel-Ziv Complexity*, $S(T) \approx S_{LZ}$, and inverting the formula for entropy, we can obtain the temperature $\hat T=T(S_{LZ})$. Finally, we plug our estimate of the temperature $\hat T$ into all the other quantities to lock them into place (see the [[Semantic Dynamics - Studying the Thermodynamics of Semantic Particles#Hypothesis on Entropy|Hypothesis on Entropy]]).
 
 #### How to Find the Temperature $T$
@@ -424,7 +473,7 @@ This hypothesis is necessary to study the system with the tools of *Statistical 
 
 ### Hypothesis on Entropy
 
-> To lock the value of the temperature into place, we assume that we can measure the entropy of the system directly from the list of tokens with the *Lempel-Ziv Complexity*, $S(T) \approx S_{LZ}$.
+> To lock the value of temperature into place through entropy, we assume that we can measure the entropy of the system directly from the list of tokens with the *Lempel-Ziv Complexity*, $S(T) \approx S_{LZ}$.
 
 This bridge between the two types of entropy is just an approximation, and, in the future, a better trick may be found to lock the thermodynamic quantities into place.
 
