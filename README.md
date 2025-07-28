@@ -64,7 +64,7 @@ If we, in fact, replace the Euclidean metric with the *Fisher information metric
 
 ### Semantic Density $\rho(q)$
 
-The probability density $\rho(q)$ plays a foundational role in the thermodynamic framework of semantic dynamics. It quantifies how frequently different regions of the embedding space $\mathcal{E}$ are occupied by the *semantic point*. In this context, $\rho(q)$ is not merely a statistical artifact—it represents the *empirical likelihood of encountering a particular semantic state* $q$ throughout the text. High-density regions correspond to common, coherent, or stylistically typical meanings (e.g., standard syntactic patterns, frequent topics), while low-density areas represent rare, idiosyncratic, or disfluent constructions. This makes $\rho(q)$ a direct proxy for *semantic plausibility*, and through the relation $V(q) = -\log \rho(q)$, it defines the underlying potential landscape that governs the motion of the semantic particle.
+The probability density $\rho(q)$ plays a foundational role in the thermodynamic framework of semantic dynamics. It quantifies how frequently different regions of the embedding space $\mathcal{E}$ are occupied by the *semantic point*. In this context, $\rho(q)$ is not merely a statistical artifact—it represents the *empirical likelihood of encountering a particular semantic state* $q$ throughout the text. High-density regions correspond to common, coherent, or stylistically typical meanings (e.g., standard syntactic patterns, frequent topics), while low-density areas represent rare, idiosyncratic, or disfluent constructions. This makes $\rho(q)$ a direct proxy for *semantic plausibility*, and through the relation $V(q) = -\frac{1}{\beta} \, \log \rho(q)$, it defines the underlying potential landscape that governs the motion of the semantic particle.
 
 > **Key idea #4 — how to estimate the distribution of embeddings $\rho$**: To estimate $\rho(q)$ *empirically* from real text, we treat the sequence of sliding-window embeddings $q_t = f(\mathbf{v}[t:t+N])$ as samples from an unknown distribution. Several methods can be used, for example *Kernel Density Estimation* (KDE), *Gaussian Mixture Model* (GMM), or *$k$-Nearest Neighbors Density Estimation (k-NN DE)*. Since we assume equilibrium (see the [[Semantic Dynamics - Studying the Thermodynamics of Semantic Particles#Equilibrium Hypothesis|Equilibrium Hypothesis]]), likelihood-based analysis can help validate the estimated distribution.
 
@@ -233,7 +233,7 @@ This recovers the *equipartition theorem*: the average kinetic energy is
 $$
 \langle K \rangle = \frac{d}{2} T
 $$
-while the average potential energy $\langle V \rangle$ depends on the shape of $V(q)$ and the temperature. At low $T$, $\langle V \rangle$ approaches the global minimum of $V(q)$; at high $T$, it flattens toward the average over $\mathcal{E}$.
+On the other hand, the average potential energy $\langle V \rangle$ depends on the shape of $V(q)$ and the temperature. At low $T$, $\langle V \rangle$ approaches the global minimum of $V(q)$; at high $T$, it flattens toward the average over $\mathcal{E}$.
 
 This allows us to *measure semantic temperature* directly from observed kinetic energy: a text with high $\|\dot{q}(t)\|$ variance is "hot"; one that stays near a topic center is "cold".
 
@@ -420,11 +420,11 @@ $$
 $$
 \hat T=T(S_{LZ})
 $$
-Now you may go back to back, and plug this value of the temperature to get the estimate of all other thermodynamical quantities.
+Now you may go back and plug this value of the temperature to get the estimate of all other thermodynamical quantities.
 
 ---
 
-## Hypothesis
+## Hypotheses
 
 
 ### Ergodic Hypothesis
@@ -459,7 +459,7 @@ By interpolating over time $t$ the discrete embeddings $q_t = f(\mathbf{v}[t:t+N
 
 ### Equilibrium Hypothesis
 
-> We assume that the gas we are studying is at equilibrium. In principle, equilibrium occurs when the distribution of embeddings $\rho$ of any (reasonably) small portion of the text is similar to the distribution of the entire corpus.
+> **We assume that the gas we are studying is at equilibrium. In principle, equilibrium occurs when the distribution of embeddings $\rho$ of any (reasonably) small portion of the text is similar to the distribution of the entire corpus.**
 
 This hypothesis may not hold in general, and it's an interesting question whether it may be relaxed. In any case, to improve the stability, it should be a good idea to split the text based on meaning and study each chunk individually. 
 
