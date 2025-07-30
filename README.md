@@ -1,6 +1,7 @@
 
 # Semantic Dynamics
 
+_(Read the [PDF](https://github.com/Omega97/semantic-dynamics/blob/main/Semantic_Dynamics.pdf) for a more up-to-date version of the article)_
 
 ## Introduction
 
