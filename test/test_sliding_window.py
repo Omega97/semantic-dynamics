@@ -21,7 +21,7 @@ except ModuleNotFoundError as e:  # fallback for direct execution in flat tree
     raise e
 
 DEFAULT_MODEL_NAME = "all-MiniLM-L6-v2"
-WINDOW_SIZE = 50  # words per window
+WINDOW_SIZE = 100  # words per window
 STRIDE = 3        # step size (1 = fully overlapping, WINDOW_SIZE = non‑overlap)
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -41,7 +41,6 @@ def main() -> None:
     model = SentenceTransformer(DEFAULT_MODEL_NAME)
 
     file_names = find_file_names()
-    file_names = file_names[:1]
 
     for text_path in file_names:
         print(f"\n[File] {text_path.name}")
