@@ -196,9 +196,14 @@
   },
   "active": "5c8e311cb0b0266b",
   "lastOpenFiles": [
-    "Latex.md",
-    "README.md",
     "Semantic_Dynamics.pdf",
+    "semantic_dynamics/src/density_estimation.py~",
+    "test/test_rho_fit.py~",
+    "semantic_dynamics/src/__pycache__/density_estimation.cpython-311.pyc",
+    "test/test_rho_fit.py",
+    "semantic_dynamics/src/density_estimation.py",
+    "README.md",
+    "Latex.md",
     "Summary.md",
     "Email.md"
   ]
