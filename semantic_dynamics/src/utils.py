@@ -1,6 +1,8 @@
 from typing import List
 import numpy as np
 from sentence_transformers import SentenceTransformer
+from pathlib import Path
+import sys
 
 
 def sliding_window_embeddings(
@@ -56,3 +58,11 @@ def sliding_window_embeddings(
     )
 
     return embeddings
+
+
+def find_npy_files(data_dir) -> list[Path]:
+    npy_files = sorted(data_dir.glob("*.npy"))
+    if not npy_files:
+        print(f"[ERROR] No .npy files found in {data_dir}. Run test_sliding_window.py first.", file=sys.stderr)
+        sys.exit(1)
+    return npy_files
